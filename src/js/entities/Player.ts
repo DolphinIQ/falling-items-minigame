@@ -19,19 +19,20 @@ class Player
     #acceleration: Point;
     #input: PlayerInput;
     health: number;
+    score: number;
 
     constructor( texture: Texture )
     {
         texture.source.scaleMode = "nearest";
         this.velocity = new Point( 0, 0 );
-        // this.#acceleration = new Point( 40, 0 );
-        this.#acceleration = new Point( 20, 0 ); //////////////////////
+        this.#acceleration = new Point( 40, 0 );
         this.#input = new PlayerInput();
         this.sprite = new Sprite( texture );
         this.sprite.scale.set( 2 );
         this.sprite.anchor.set( 0.5, 0.5 );
         this.sprite.bounds.width *= 0.5;
         this.health = 10;
+        this.score = 0;
 
         window.addEventListener( "keydown", ( evt ) => {
             this.#keymap( evt.key, true );
@@ -43,18 +44,19 @@ class Player
 
     #keymap( key: string, isPressedDown: boolean ): void
     {
-        if ( key === 'ArrowLeft' )
+        if ( key === 'ArrowLeft' || key === 'a' )
         {
             this.#input.left = isPressedDown;
         }
-        if ( key === 'ArrowRight' )
+        if ( key === 'ArrowRight' || key === 'd' )
         {
             this.#input.right = isPressedDown;
         }
     }
 
-    update( time: Ticker, floorFriction: number ): void
+    update( time: Ticker, floorFriction: number, screenMarginX: number ): void
     {
+        // Handle input
         if ( this.#input.left )
         {
             this.velocity.x -= this.#acceleration.x;
@@ -63,14 +65,32 @@ class Player
         {
             this.velocity.x += this.#acceleration.x;
         }
+
+        // Apply factors like friction to velocity 
         this.velocity.x *= floorFriction;
         if ( Math.abs( this.velocity.x ) < 0.01 )
         {
             this.velocity.x = 0;
         }
 
+        // Finally apply velocity to position
         this.sprite.position.x += this.velocity.x / time.deltaMS;
         this.sprite.position.y -= this.velocity.y / time.deltaMS;
+
+        // Check position against screen bounds, allowing bouncing off screen edges
+        if ( this.sprite.position.x < screenMarginX ||
+            this.sprite.position.x > window.innerWidth - screenMarginX )
+        {
+            this.velocity.x *= -floorFriction;
+            this.sprite.position.x += this.velocity.x * 0.1;
+        }
+    }
+
+    reset(): void
+    {
+        this.sprite.position.set( window.innerWidth / 2, window.innerHeight - 150 );
+        this.score = 0;
+        this.health = Player.MAX_HEALTH;
     }
 
     collidesWithFallingItem( item: FallingItem ): boolean
@@ -85,6 +105,8 @@ class Player
         }
         return false;
     }
+
+    static MAX_HEALTH: number = 10;
 }
 
 export { Player };
