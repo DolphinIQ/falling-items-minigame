@@ -21,7 +21,7 @@ class FallingItem implements OnUpdate
         this.sprite.anchor.set( 0.5, 0.5 );
         this.sprite.cullable = true;
         this.rotationSpeed = 0.005 + Math.random() * 0.02;
-        this.fallingSpeed = Math.random() * 4;
+        this.fallingSpeed = Math.random() * 3;
         this.collisionRadius = 10;
         this.game = game;
     }

@@ -11,7 +11,7 @@ const initLevels = ( game: Game ): Level[] =>
         floorHeight: 75,
         floorColor: 0x449238,
         floorFrictionFactor: 0.86,
-        gravity: 2,
+        gravity: 1.5,
         activeItemsCount: 10,
         winningScoreCount: 20,
     }) );
@@ -22,7 +22,7 @@ const initLevels = ( game: Game ): Level[] =>
         floorHeight: 125,
         floorColor: 0x95EAFF,
         floorFrictionFactor: 0.92,
-        gravity: 3,
+        gravity: 2,
         activeItemsCount: 20,
         winningScoreCount: 30,
     }) );

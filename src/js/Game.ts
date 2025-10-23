@@ -142,7 +142,6 @@ class Game implements OnUpdate
     start(): void
     {
         this.startLevel( this.levels[ 0 ] );
-        console.log( "Level id:", this.getCurrentLevel().id );
     }
 
     endLevel(): void

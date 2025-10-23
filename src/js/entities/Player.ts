@@ -61,11 +61,11 @@ class Player
         // Handle input
         if ( this.#input.left )
         {
-            this.velocity.x -= this.#acceleration.x;
+            this.velocity.x -= this.#acceleration.x / time.deltaMS;
         }
         if ( this.#input.right )
         {
-            this.velocity.x += this.#acceleration.x;
+            this.velocity.x += this.#acceleration.x / time.deltaMS;
         }
 
         // Apply factors like friction to velocity 
@@ -76,15 +76,21 @@ class Player
         }
 
         // Finally apply velocity to position
-        this.sprite.position.x += this.velocity.x / time.deltaMS;
-        this.sprite.position.y -= this.velocity.y / time.deltaMS;
+        this.sprite.position.x += this.velocity.x;
+        this.sprite.position.y -= this.velocity.y;
 
         // Check position against screen bounds, allowing bouncing off screen edges
-        if ( this.sprite.position.x < this.game.getCurrentLevel().playerScreenBoundsX ||
-            this.sprite.position.x > window.innerWidth - this.game.getCurrentLevel().playerScreenBoundsX )
+        if ( this.sprite.position.x < this.game.getCurrentLevel().playerScreenBoundsX ) // left bounds
         {
-            this.velocity.x *= -this.game.getCurrentLevel().floorFrictionFactor;
-            this.sprite.position.x += this.velocity.x * 0.1;
+            this.velocity.x = Math.abs( this.velocity.x ) * this.game.getCurrentLevel().floorFrictionFactor;
+            this.velocity.x = Math.max( this.velocity.x, Player.MIN_BOUNDS_VELOCITY );
+            this.sprite.position.x += this.velocity.x * 0.2;
+        }
+        if ( this.sprite.position.x > window.innerWidth - this.game.getCurrentLevel().playerScreenBoundsX ) // right bounds
+        {
+            this.velocity.x = -Math.abs( this.velocity.x ) * this.game.getCurrentLevel().floorFrictionFactor;
+            this.velocity.x = Math.min( this.velocity.x, -Player.MIN_BOUNDS_VELOCITY );
+            this.sprite.position.x += this.velocity.x * 0.2;
         }
     }
 
@@ -116,6 +122,7 @@ class Player
     }
 
     static MAX_HEALTH: number = 10;
+    static MIN_BOUNDS_VELOCITY: number = 20;
 }
 
 export { Player };
