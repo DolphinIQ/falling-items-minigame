@@ -1,56 +1,84 @@
-const endScreenDiv: HTMLElement | null = document.querySelector( ".end-screen" );
-const endScreenMessageDiv: HTMLElement | null = document.querySelector( ".message" );
-const tryAgainBtn: HTMLElement | null = document.querySelector( ".try-again-btn" );
-const healthInfo: HTMLElement | null = document.querySelector( ".health" );
-const scoreInfo: HTMLElement | null = document.querySelector( ".score" );
-const levelDiv: HTMLElement | null = document.querySelector( ".level" );
+import { Player } from "./entities/Player";
 
-if (
-    endScreenMessageDiv === null ||
-    endScreenDiv === null ||
-    tryAgainBtn === null ||
-    healthInfo === null ||
-    levelDiv === null ||
-    scoreInfo === null
-) {
-    throw console.error( "UI Elements are invalid!" );
-}
+class UIClass
+{
+    endScreenDiv: Element;
+    endScreenMessageDiv: Element
+    tryAgainBtn: Element;
+    healthInfo: Element;
+    scoreInfo: Element;
+    levelDiv: Element;
 
-const UI = {
-    endGameMenuShow: ( titleScreen?: string ): void =>
+    constructor()
     {
-        endScreenDiv.classList.remove( "hidden" );
+        const endScreenDiv = document.querySelector( ".end-screen" );
+        const endScreenMessageDiv = document.querySelector( ".message" );
+        const tryAgainBtn = document.querySelector( ".try-again-btn" );
+        const healthInfo = document.querySelector( ".health" );
+        const scoreInfo = document.querySelector( ".score" );
+        const levelDiv = document.querySelector( ".level" );
+
+        if (
+            endScreenMessageDiv === null ||
+            endScreenDiv === null ||
+            tryAgainBtn === null ||
+            healthInfo === null ||
+            levelDiv === null ||
+            scoreInfo === null
+        ) {
+            throw console.error( "UI Elements are invalid!" );
+        }
+
+        this.endScreenDiv = endScreenDiv;
+        this.endScreenMessageDiv = endScreenMessageDiv;
+        this.tryAgainBtn = tryAgainBtn;
+        this.healthInfo = healthInfo;
+        this.scoreInfo = scoreInfo;
+        this.levelDiv = levelDiv;
+    }
+
+    init( btnCb: Function ): void
+    {
+        this.setTryAgainBtnCallback( btnCb );
+        this.endGameMenuHide();
+        this.updateHealth( Player.MAX_HEALTH );
+    }
+
+    endGameMenuShow( titleScreen?: string ): void
+    {
+        this.endScreenDiv.classList.remove( "hidden" );
         if ( titleScreen )
         {
-            endScreenMessageDiv.textContent = titleScreen;
+            this.endScreenMessageDiv.textContent = titleScreen;
         }
         else
         {
-            endScreenMessageDiv.textContent = "Game Over";
+            this.endScreenMessageDiv.textContent = "Game Over";
         }
-    },
-    endGameMenuHide: (): void =>
+    }
+    endGameMenuHide(): void
     {
-        endScreenDiv.classList.add( "hidden" );
-    },
-    setTryAgainBtnCallback: ( cb: Function ): void =>
+        this.endScreenDiv.classList.add( "hidden" );
+    }
+    setTryAgainBtnCallback( cb: Function ): void
     {
-        tryAgainBtn.addEventListener( "click", () => {
+        this.tryAgainBtn.addEventListener( "click", () => {
             cb();
         }, false );
-    },
-    updateHealth: ( value: number ): void =>
-    {
-        healthInfo.textContent = `Lives: ${ value }`;
-    },
-    updateScore: ( value: number, maximumScore: number ): void =>
-    {
-        scoreInfo.textContent = `Score: ${ value }/${ maximumScore }`;
-    },
-    updateLevel: ( levelId: number ): void =>
-    {
-        levelDiv.textContent = `Level ${ levelId }`;
     }
-};
+    updateHealth( value: number ): void
+    {
+        this.healthInfo.textContent = `Lives: ${ value }`;
+    }
+    updateScore( value: number, maximumScore: number ): void
+    {
+        this.scoreInfo.textContent = `Score: ${ value }/${ maximumScore }`;
+    }
+    updateLevel( levelId: number ): void
+    {
+        this.levelDiv.textContent = `Level ${ levelId + 1 }`;
+    }
+}
 
+const UI: UIClass = new UIClass();
 export { UI };

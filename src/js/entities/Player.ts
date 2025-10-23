@@ -1,5 +1,9 @@
-import { Assets, Point, Sprite, Texture, Ticker } from "pixi.js";
+import { Point, Sprite, Texture, Ticker } from "pixi.js";
 import type { FallingItem } from "./FallingItem";
+import { playSound, Sounds } from "../Sounds";
+import type { Level } from "../Level";
+import { UI } from "../UI";
+import type { Game } from "../Game";
 
 class PlayerInput
 {
@@ -19,9 +23,8 @@ class Player
     #acceleration: Point;
     #input: PlayerInput;
     health: number;
-    score: number;
 
-    constructor( texture: Texture )
+    constructor( private readonly game: Game, texture: Texture )
     {
         texture.source.scaleMode = "nearest";
         this.velocity = new Point( 0, 0 );
@@ -32,7 +35,6 @@ class Player
         this.sprite.anchor.set( 0.5, 0.5 );
         this.sprite.bounds.width *= 0.5;
         this.health = 10;
-        this.score = 0;
 
         window.addEventListener( "keydown", ( evt ) => {
             this.#keymap( evt.key, true );
@@ -54,7 +56,7 @@ class Player
         }
     }
 
-    update( time: Ticker, floorFriction: number, screenMarginX: number ): void
+    onUpdate( time: Ticker )
     {
         // Handle input
         if ( this.#input.left )
@@ -67,7 +69,7 @@ class Player
         }
 
         // Apply factors like friction to velocity 
-        this.velocity.x *= floorFriction;
+        this.velocity.x *= this.game.getCurrentLevel().floorFrictionFactor;
         if ( Math.abs( this.velocity.x ) < 0.01 )
         {
             this.velocity.x = 0;
@@ -78,18 +80,25 @@ class Player
         this.sprite.position.y -= this.velocity.y / time.deltaMS;
 
         // Check position against screen bounds, allowing bouncing off screen edges
-        if ( this.sprite.position.x < screenMarginX ||
-            this.sprite.position.x > window.innerWidth - screenMarginX )
+        if ( this.sprite.position.x < this.game.getCurrentLevel().playerScreenBoundsX ||
+            this.sprite.position.x > window.innerWidth - this.game.getCurrentLevel().playerScreenBoundsX )
         {
-            this.velocity.x *= -floorFriction;
+            this.velocity.x *= -this.game.getCurrentLevel().floorFrictionFactor;
             this.sprite.position.x += this.velocity.x * 0.1;
         }
+    }
+
+    collect( item: FallingItem, currentLevel: Level )
+    {
+        playSound( Sounds.eating );
+        currentLevel.score += 1;
+        UI.updateScore( currentLevel.score, currentLevel.winningScoreCount );
+        item.resetFallingPosition();
     }
 
     reset( floorHeight: number ): void
     {
         this.sprite.position.set( window.innerWidth / 2, window.innerHeight - floorHeight - 75 );
-        this.score = 0;
         this.health = Player.MAX_HEALTH;
     }
 

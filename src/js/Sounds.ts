@@ -10,7 +10,7 @@ Sounds.lostHealth.volume = 0.4;
 const playSound = ( sound: HTMLAudioElement ) =>
 {
     sound.currentTime = 0; // Resets the sound before playing, making multiple playbacks smoother
-    sound.play();
+    // sound.play(); hgfghfgfhfghfghfghfgh
 }
 
 export { Sounds, playSound };
