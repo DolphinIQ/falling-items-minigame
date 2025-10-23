@@ -15,13 +15,13 @@ class FallingItem
         this.sprite.scale.set( 4 );
         this.sprite.anchor.set( 0.5, 0.5 );
         this.#rotationSpeed = 0.005 + Math.random() * 0.02;
-        this.#fallingSpeed = 2 + Math.random() * 2;
+        this.#fallingSpeed = Math.random() * 2;
         this.collisionRadius = 10;
     }
 
-    update( time: Ticker, screenMarginX: number, screenMarginY: number ): void
+    update( time: Ticker, gravity: number, screenMarginX: number, screenMarginY: number ): void
     {
-        this.sprite.position.y += this.#fallingSpeed * time.deltaTime;
+        this.sprite.position.y += (gravity + this.#fallingSpeed) * time.deltaTime;
         this.sprite.rotation += this.#rotationSpeed;
 
         // Responsive design check in case the window has shrunk
@@ -43,7 +43,7 @@ class FallingItem
     resetFallingPosition( marginX: number, marginY: number ): void
     {
         this.sprite.position.x = marginX + Math.random() * (window.innerWidth - (marginX * 2));
-        this.sprite.position.y = marginY + Math.random() * window.innerHeight * 0.3;
+        this.sprite.position.y = marginY + Math.random() * marginY * 0.5;
     }
 }
 

@@ -86,9 +86,9 @@ class Player
         }
     }
 
-    reset(): void
+    reset( floorHeight: number ): void
     {
-        this.sprite.position.set( window.innerWidth / 2, window.innerHeight - 150 );
+        this.sprite.position.set( window.innerWidth / 2, window.innerHeight - floorHeight - 75 );
         this.score = 0;
         this.health = Player.MAX_HEALTH;
     }

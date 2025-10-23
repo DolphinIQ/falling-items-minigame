@@ -20,6 +20,18 @@ body {
     display: none;
 }
 
+.level {
+    position: absolute;
+    top: 1rem;
+    left: 50%;
+    transform: translateX( -50% );
+
+    user-select: none;
+    color: white;
+    font-size: 10rem;
+    text-shadow: 2px 2px 4px #000;
+}
+
 .info {
     position: absolute;
     top: 2rem;
@@ -27,6 +39,7 @@ body {
     font-size: 6rem;
     font-weight: bold;
     text-shadow: 2px 2px 4px #000;
+    user-select: none;
 
     .health {
         color: red;
